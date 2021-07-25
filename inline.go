@@ -1226,3 +1226,37 @@ func text(s []byte) *Node {
 func normalizeURI(s []byte) []byte {
 	return s // TODO: implement
 }
+
+var usernameRegexp = regexp.MustCompile(`@[a-zA-Z0-9.-_]{3,50}\b`)
+
+func mention(p *Markdown, data []byte, offset int) (int, *Node) {
+	// If we previously skipped an @ and there's an @ now, the mention was escaped
+	if offset > 0 && data[offset-1] == data[offset] {
+		return 0, nil
+	}
+
+	data = data[offset:]
+
+	// Escape mentions by using a double at-sign
+	if data[0] == data[1] && data[0] == '@' {
+		return 1, nil
+	}
+
+	match := usernameRegexp.FindIndex(data)
+	if match == nil {
+		return 0, nil
+	}
+
+	b := data[match[0]+1 : match[1]]
+	str := string(b)
+
+	if p.mentionFound != nil {
+		p.mentionFound(str)
+	}
+
+	node := NewNode(Link)
+	node.Destination = []byte("/@" + str)
+	node.AppendChild(text([]byte("@" + str)))
+
+	return match[1] - match[0], node
+}

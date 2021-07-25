@@ -179,6 +179,7 @@ type Markdown struct {
 	nesting           int
 	maxNesting        int
 	insideLink        bool
+	mentionFound      func(string)
 
 	// Footnotes need to be ordered as well as available to quickly check for
 	// presence. If a ref is also a footnote, it's stored both in refs and here
@@ -297,6 +298,7 @@ func New(opts ...Option) *Markdown {
 	p.inlineCallback['&'] = entity
 	p.inlineCallback['!'] = maybeImage
 	p.inlineCallback['^'] = maybeInlineFootnote
+	p.inlineCallback['@'] = mention
 	if p.extensions&Autolink != 0 {
 		p.inlineCallback['h'] = maybeAutoLink
 		p.inlineCallback['m'] = maybeAutoLink
@@ -336,6 +338,12 @@ func WithNoExtensions() Option {
 		p.renderer = NewHTMLRenderer(HTMLRendererParameters{
 			Flags: HTMLFlagsNone,
 		})
+	}
+}
+
+func WithMentionFound(fn func(string)) Option {
+	return func(p *Markdown) {
+		p.mentionFound = fn
 	}
 }
 
