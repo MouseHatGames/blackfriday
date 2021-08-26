@@ -570,6 +570,10 @@ func link(p *Markdown, data []byte, offset int) (int, *Node) {
 		linkNode.AppendChild(text(data[1:txtE]))
 		i++
 
+		if p.imageFound != nil {
+			p.imageFound(string(uLink))
+		}
+
 	case linkInlineFootnote, linkDeferredFootnote:
 		linkNode = NewNode(Link)
 		linkNode.Destination = link

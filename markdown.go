@@ -180,6 +180,7 @@ type Markdown struct {
 	maxNesting        int
 	insideLink        bool
 	mentionFound      func(string)
+	imageFound        func(src string)
 
 	// Footnotes need to be ordered as well as available to quickly check for
 	// presence. If a ref is also a footnote, it's stored both in refs and here
@@ -344,6 +345,12 @@ func WithNoExtensions() Option {
 func WithMentionFound(fn func(string)) Option {
 	return func(p *Markdown) {
 		p.mentionFound = fn
+	}
+}
+
+func WithImageFound(fn func(src string)) Option {
+	return func(p *Markdown) {
+		p.imageFound = fn
 	}
 }
 
