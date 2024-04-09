@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	urlRe    = `((https?|ftp):\/\/|\/)[-A-Za-z0-9+&@#\/%?=~_|!:,.;\(\)]+`
+	urlRe    = `((https?|ftp|logicworld):\/\/|\/)[-A-Za-z0-9+&@#\/%?=~_|!:,.;\(\)]+`
 	anchorRe = regexp.MustCompile(`^(<a\shref="` + urlRe + `"(\stitle="[^"<>]+")?\s?>` + urlRe + `<\/a>)`)
 
 	// https://www.w3.org/TR/html5/syntax.html#character-references
@@ -764,7 +764,7 @@ var protocolPrefixes = [][]byte{
 	[]byte("ftp://"),
 	[]byte("file://"),
 	[]byte("mailto:"),
-	[]byte("logicworld:"),
+	[]byte("logicworld://"),
 }
 
 const shortestPrefix = 6 // len("ftp://"), the shortest of the above
@@ -775,7 +775,7 @@ func maybeAutoLink(p *Markdown, data []byte, offset int) (int, *Node) {
 		return 0, nil
 	}
 	for _, prefix := range protocolPrefixes {
-		endOfHead := offset + 8 // 8 is the len() of the longest prefix
+		endOfHead := offset + 13 // 13 is the len() of the longest prefix
 		if endOfHead > len(data) {
 			endOfHead = len(data)
 		}
