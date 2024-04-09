@@ -739,7 +739,9 @@ func linkEndsWithEntity(data []byte, linkEnd int) bool {
 }
 
 // hasPrefixCaseInsensitive is a custom implementation of
-//     strings.HasPrefix(strings.ToLower(s), prefix)
+//
+//	strings.HasPrefix(strings.ToLower(s), prefix)
+//
 // we rolled our own because ToLower pulls in a huge machinery of lowercasing
 // anything from Unicode and that's very slow. Since this func will only be
 // used on ASCII protocol prefixes, we can take shortcuts.
@@ -762,6 +764,7 @@ var protocolPrefixes = [][]byte{
 	[]byte("ftp://"),
 	[]byte("file://"),
 	[]byte("mailto:"),
+	[]byte("logicworld:"),
 }
 
 const shortestPrefix = 6 // len("ftp://"), the shortest of the above
@@ -906,7 +909,7 @@ func isEndOfLink(char byte) bool {
 	return isspace(char) || char == '<'
 }
 
-var validUris = [][]byte{[]byte("http://"), []byte("https://"), []byte("ftp://"), []byte("mailto://")}
+var validUris = [][]byte{[]byte("http://"), []byte("https://"), []byte("ftp://"), []byte("mailto://"), []byte("logicworld://")}
 var validPaths = [][]byte{[]byte("/"), []byte("./"), []byte("../")}
 
 func isSafeLink(link []byte) bool {
